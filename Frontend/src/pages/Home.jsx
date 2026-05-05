@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('/api/products');
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products`);
         if (!res.ok) {
           throw new Error(`Server returned ${res.status}`);
         }
