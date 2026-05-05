@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
 
   // Update user profile
   const updateProfile = async (updates) => {
-    const res = await fetch(`/api/users/${user._id}`, {
+    const res = await fetch(`${API_URL}/api/users/${user._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
