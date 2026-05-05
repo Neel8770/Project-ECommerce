@@ -71,7 +71,7 @@ const userData = JSON.parse(userStorageString);
 const token = userData.token;
       // WHAT: Ask backend to create a "Pending" order and give us a Token.
       // WHY: Razorpay's popup will refuse to open without an official 'order_id' from our backend.
-      const orderResponse = await fetch("http://localhost:5000/api/payment/create-order", {
+      const orderResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +96,7 @@ const token = userData.token;
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
         amount: orderData.amount, // The amount in PAISE that our backend returned
-        currency: "INR ",
+        currency: "INR",
         name: "ShopVibe", // Text shown at the top of the popup
         description: "Secure Checkout",
         order_id: orderData.razorpayOrderId, // The golden ticket from our backend!
@@ -107,7 +107,7 @@ const token = userData.token;
           try {
             // WHAT: Send the proof back to our Node.js backend.
             // WHY: Hackers can easily fake a "Success" message on the frontend. We send the signature to the backend for cryptographic verification.
-            const verifyReq = await fetch("http://localhost:5000/api/payment/verify", {
+            const verifyReq = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/verify`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

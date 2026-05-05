@@ -41,7 +41,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
 }
 
-.section-title {
+.checkout-wrapper .section-title {
   font-size: 1.4rem;
   font-weight: 800;
   margin-bottom: 24px;
@@ -82,7 +82,8 @@
   flex-direction: column;
 }
 
-input, textarea {
+.checkout-wrapper input,
+.checkout-wrapper textarea {
   width: 100%;
   padding: 14px 20px;
   border-radius: 12px;
@@ -94,12 +95,13 @@ input, textarea {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-input:focus, textarea:focus {
+.checkout-wrapper input:focus,
+.checkout-wrapper textarea:focus {
   border-color: var(--theme-orange);
   box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1); /* Soft orange glow */
 }
 
-textarea {
+.checkout-wrapper textarea {
   min-height: 80px;
   resize: vertical;
 }
@@ -160,6 +162,14 @@ textarea {
   align-items: center;
   margin-bottom: 16px;
   font-size: 0.95rem;
+  gap: 8px;
+}
+
+.summary-item span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .qty-badge {
@@ -169,10 +179,12 @@ textarea {
   font-size: 0.75rem;
   font-weight: 700;
   margin-left: 8px;
+  flex-shrink: 0;
 }
 
 .item-price {
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .divider {
@@ -200,35 +212,66 @@ textarea {
   color: var(--text-dark);
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 900px) {
+/* ===== RESPONSIVE: Tablet Landscape ===== */
+@media (max-width: 1024px) {
+  .checkout-wrapper {
+    margin: 32px auto;
+    padding: 0 20px;
+  }
+
+  .checkout-container {
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+  }
+}
+
+/* ===== RESPONSIVE: Tablet Portrait ===== */
+@media (max-width: 768px) {
+  .checkout-wrapper {
+    margin: 24px auto;
+    padding: 0 16px;
+  }
+
   .checkout-container {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
   
   .form-row {
     flex-direction: column;
     gap: 0;
   }
+
+  .glass-panel {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  .checkout-wrapper .section-title {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+  }
 }
 
+/* ===== RESPONSIVE: Mobile ===== */
 @media (max-width: 480px) {
   .checkout-wrapper {
-    margin: 20px auto;
+    margin: 16px auto;
     padding: 0 12px;
   }
 
   .glass-panel {
-    padding: 20px 16px;
+    padding: 20px 14px;
     border-radius: 16px;
   }
 
-  .section-title {
-    font-size: 1.2rem;
+  .checkout-wrapper .section-title {
+    font-size: 1.15rem;
     margin-bottom: 16px;
   }
 
-  input, textarea {
+  .checkout-wrapper input,
+  .checkout-wrapper textarea {
     padding: 12px 16px;
     font-size: 0.9rem;
     border-radius: 10px;
@@ -246,6 +289,10 @@ textarea {
   .back-btn {
     font-size: 0.88rem;
     margin-bottom: 16px;
+  }
+
+  .summary-item {
+    font-size: 0.88rem;
   }
 }
 

@@ -118,7 +118,7 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get("http://localhost:5000/api/cart", config);
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/cart`, config);
       setCart(data.cartItems || []);
     } catch (err) {
       console.error("Sync error:", err.response?.data?.message || "Server unreachable");
@@ -139,7 +139,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/cart", { productId, qty }, config);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/cart`, { productId, qty }, config);
       await fetchCart(); // Re-sync the state with the new DB data
       setLoading(false);
       setIsDrawerOpen(true); // Pop open the drawer for feedback
@@ -159,7 +159,7 @@ export const CartProvider = ({ children }) => {
     if (!config) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/cart/${productId}`, config);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/cart/${productId}`, config);
       await fetchCart(); 
     } catch (err) {
       console.error("Delete failed:", err.message);
@@ -173,7 +173,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       // We use the ID to tell the backend which item to decrement
-      await axios.put("http://localhost:5000/api/cart/decrease", { productId }, config);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/cart/decrease`, { productId }, config);
       await fetchCart(); 
     } catch (err) {
       console.error("Decrease failed:", err.response?.data?.message || err.message);
