@@ -15,6 +15,12 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return setError("Please provide a valid email address format.");
+  }
+
     setError('');
 
     if (password !== confirmPassword) {

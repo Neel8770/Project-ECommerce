@@ -6,10 +6,17 @@ export const registerSchema = Joi.object({
     'string.min': 'Name must be at least 3 characters long',
     'any.required': 'Name is a required field'
   }),
-  email: Joi.string().email().required().messages({
-    'string.email': 'Please provide a valid email address',
-    'any.required': 'Email is a required field'
-  }),
+  email: Joi.string()
+    .email({ 
+      minDomainSegments: 2, 
+      // This forces the email to end in a real TLD like .com or .in
+      tlds: { allow: ['com', 'net', 'org', 'in', 'io'] } 
+    })
+    .required()
+    .messages({
+      "string.email": "Please enter a valid email address (e.g. name@gmail.com)",
+      "string.empty": "Email cannot be empty"
+    }),
   password: Joi.string().min(6).required().messages({
     'string.min': 'Password must be at least 6 characters long',
     'any.required': 'Password is a required field'
