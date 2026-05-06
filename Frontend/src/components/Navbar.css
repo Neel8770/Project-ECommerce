@@ -184,9 +184,16 @@
 
 /* ===== Tablet Portrait / Mobile ===== */
 @media (max-width: 768px) {
+  /* CRITICAL FIX: Remove backdrop-filter on mobile.
+     backdrop-filter creates a new CSS containing block, which causes
+     position:fixed children (.nav-links) to be positioned relative to
+     the navbar (60px tall) instead of the viewport. */
   .navbar {
     padding: 0 16px;
     height: 60px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.97);
   }
 
   .nav-logo a {
@@ -197,6 +204,7 @@
     display: flex;
   }
 
+  /* Slide-out drawer — now position:fixed works against the viewport */
   .nav-links {
     position: fixed;
     top: 0;
@@ -204,16 +212,19 @@
     bottom: 0;
     width: 280px;
     max-width: 80vw;
+    height: 100vh;
+    height: 100dvh; /* dynamic viewport height for mobile browsers */
     background: var(--color-background);
     flex-direction: column;
     align-items: stretch;
-    gap: 4px;
+    gap: 6px;
     padding: 80px 20px 32px;
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15);
     z-index: 200;
     transform: translateX(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .nav-links.open {
@@ -221,23 +232,33 @@
   }
 
   .nav-links a {
+    display: block;
     padding: 14px 16px;
     font-size: 1rem;
     border-radius: var(--radius-md);
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .nav-links .logout-btn {
+    display: block;
     padding: 14px 16px;
     font-size: 1rem;
     border-radius: var(--radius-md);
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
   }
 
   .nav-links .cart-link {
+    display: flex;
     padding: 14px 16px;
     font-size: 1rem;
     justify-content: flex-start;
     border-radius: var(--radius-md);
     color: var(--color-accent);
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .mobile-overlay {
@@ -246,6 +267,7 @@
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 199;
     animation: fadeIn 0.2s ease;
   }
