@@ -7,7 +7,7 @@ const validate = (schema) => (req, res, next) => {
     const errorMessage = error.details.map((details) => details.message).join(', ');
     return res.status(400).json({
       success: false,
-      message: "Validation Error",
+      message: errorMessage,
       error: errorMessage,
     });
   }
