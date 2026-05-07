@@ -1,5 +1,8 @@
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
+import otp from "../models/OTP.js";
+import { sendEmail } from "../utils/sendEmail.js";
+import OTP from "../models/OTP.js";
 
 export const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -82,6 +85,24 @@ export const authUser = async (req,res) => {
         res.status(401).json({
             message: 'Invalid email or password'
         });
+    }
+};
+
+export const sendOTP = async (req,res) => {
+    const { email } =req.body;
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    try{
+        await OTP.findOneAndUpdate(
+            {email},
+            {otp, createdAt: Date.now()},
+            {upsert: true, new: true}
+        );
+        await sendEmail(email, otp);
+        res.status(200).json({success:true,message: "OTP sent!"});
+    } catch (error) {
+        res.status(500).json({success:false,message: "error sending OTP" });
     }
 };
 

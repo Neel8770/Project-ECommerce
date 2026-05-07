@@ -1,5 +1,5 @@
 import express from "express";
-import { authUser, registerUser, deleteUser, updateUser } from "../controller/user.js";
+import { authUser, registerUser, deleteUser, updateUser, sendOTP } from "../controller/user.js";
 import { registerSchema, loginSchema } from "../validations/uservalidations.js";
 import { protect } from "../middleware/authMiddleware.js"; 
 import validate from "../middleware/validate.js"; 
@@ -9,6 +9,7 @@ router.post("/register", validate(registerSchema), registerUser);
 
 router.post("/login", validate(loginSchema), authUser);
 
+router.post("/send-otp", sendOTP)
 
 router.put("/:id", protect, updateUser);
 
