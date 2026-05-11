@@ -3,13 +3,19 @@ import { authUser, registerUser, deleteUser, updateUser, sendOTP } from "../cont
 import { registerSchema, loginSchema } from "../validations/uservalidations.js";
 import { protect } from "../middleware/authMiddleware.js"; 
 import validate from "../middleware/validate.js"; 
+import Joi from "joi";
+
 const router = express.Router();
+
+const otpValidation = Joi.object({
+  email: Joi.string().email().required()
+});
 
 router.post("/register", validate(registerSchema), registerUser);
 
 router.post("/login", validate(loginSchema), authUser);
 
-router.post("/send-otp", sendOTP)
+router.post("/send-otp", validate(otpValidation), sendOTP)
 
 router.put("/:id", protect, updateUser);
 

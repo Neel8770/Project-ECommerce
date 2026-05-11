@@ -2,6 +2,8 @@ const validate = (schema) => (req, res, next) => {
   // Validate the request body against the provided Joi schema
   const { error } = schema.validate(req.body, { abortEarly: false });
 
+
+  
   if (error) {
     // If validation fails, format the errors into a clean array of messages
     const errorMessage = error.details.map((details) => details.message).join(', ');
@@ -11,6 +13,7 @@ const validate = (schema) => (req, res, next) => {
       error: errorMessage,
     });
   }
+  
 
   // If validation passes, move to the actual controller
   next();

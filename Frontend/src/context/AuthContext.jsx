@@ -22,25 +22,34 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Register user
-  const register = async (name, email, password) => {
+const register = async (name, email, password, otp) => {
+  // 1. Force a browser pause to see the variables  
+  try {
     const res = await fetch(`${API_URL}/api/users/register`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json' 
+      },
+      body: JSON.stringify({ name, email, password, otp }),
     });
 
+    
     const data = await res.json();
 
     if (!res.ok) {
       throw new Error(data.message || 'Registration failed');
     }
 
-    // Store user with email (backend doesn't return email in register, so we add it)
     const userData = { ...data, email };
     setUser(userData);
     localStorage.setItem('shopvibe_user', JSON.stringify(userData));
     return userData;
-  };
+  } catch (err) {
+    // 3. Alert the specific error string
+    throw err;
+  }
+};
 
   // Login user
   const login = async (email, password) => {

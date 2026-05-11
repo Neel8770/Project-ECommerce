@@ -28,9 +28,11 @@ app.use(cors({
         "http://localhost:5173"
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+
 
 // 3. Helmet Configuration
 // WHAT: Sets security headers.
@@ -51,6 +53,14 @@ app.use("/api/payment", paymentRoutes);
 // --- BASE ROUTE ---
 app.get("/", (req, res) => {
     res.send("Welcome to the ShopVibe API - Server is Live");
+});
+
+app.use((err, req, res, next) => {
+    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    res.status(statusCode).json({
+        success: false,
+        message: err.message,
+    });
 });
 
 // --- SERVER START ---

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
 export default function Register() {
@@ -10,34 +9,37 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleStepOne = async (e) => {
     e.preventDefault();
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return setError("Please provide a valid email address format.");
-  }
-
     setError('');
 
-    if (password !== confirmPassword) {
-      return setError('Passwords do not match');
-    }
-
-    if (password.length < 6) {
-      return setError('Password must be at least 6 characters');
-    }
+    // 1. Validation Logic
+    if (password !== confirmPassword) return setError('Passwords do not match');
+    if (password.length < 6) return setError('Password must be 6+ chars');
 
     setIsLoading(true);
-
     try {
-      await register(name, email, password);
-      navigate('/profile');
+      // 2. Call backend to check user & send OTP
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // 3. SUCCESS: Pass data to the Verify page via state
+        navigate('/verify-otp', { 
+          state: { name, email, password } 
+        });
+      } else {
+        setError(data.message || "Failed to proceed.");
+      }
     } catch (err) {
-      setError(err.message || 'Failed to register');
+      setError("Server connection failed.");
     } finally {
       setIsLoading(false);
     }
@@ -56,88 +58,34 @@ export default function Register() {
         <div className="auth-card">
           <div className="auth-card-header">
             <h1>Create Account</h1>
-            <p>Join us to start shopping</p>
           </div>
 
-          <form className="auth-form" onSubmit={handleSubmit}>
-            {error && (
-              <div className="auth-error">
-                <span className="auth-error-icon">⚠️</span>
-                {error}
-              </div>
-            )}
+          <form className="auth-form" onSubmit={handleStepOne}>
+            {error && <div className="auth-error">⚠️ {error}</div>}
 
             <div className="auth-form-group">
               <label className="auth-form-label">Full Name</label>
-              <div className="auth-input-wrapper">
-                <input
-                  type="text"
-                  className="auth-form-input"
-                  placeholder="John Doe"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-                <span className="auth-input-icon">👤</span>
-              </div>
+              <input className="auth-form-input" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
 
             <div className="auth-form-group">
               <label className="auth-form-label">Email Address</label>
-              <div className="auth-input-wrapper">
-                <input
-                  type="email"
-                  className="auth-form-input"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <span className="auth-input-icon">✉️</span>
-              </div>
+              <input className="auth-form-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
             <div className="auth-form-group">
               <label className="auth-form-label">Password</label>
-              <div className="auth-input-wrapper">
-                <input
-                  type="password"
-                  className="auth-form-input"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <span className="auth-input-icon">🔒</span>
-              </div>
+              <input className="auth-form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
 
             <div className="auth-form-group">
               <label className="auth-form-label">Confirm Password</label>
-              <div className="auth-input-wrapper">
-                <input
-                  type="password"
-                  className="auth-form-input"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-                <span className="auth-input-icon">🛡️</span>
-              </div>
+              <input className="auth-form-input" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
             </div>
 
             <button type="submit" className="auth-submit-btn" disabled={isLoading}>
-              {isLoading ? (
-                <><span className="auth-spinner"></span> Creating...</>
-              ) : (
-                'Sign Up'
-              )}
+              {isLoading ? "Checking..." : "Get Verification Code"}
             </button>
-
-            <div className="auth-divider">
-              <span>or</span>
-            </div>
 
             <div className="auth-footer">
               <p>Already have an account? <Link to="/login">Log in</Link></p>

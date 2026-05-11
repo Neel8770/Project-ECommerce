@@ -11,6 +11,7 @@ import Register from './pages/Register';
 import './App.css';
 import Checkout from './pages/Checkout';
 import Payment from './pages/Payment';
+import VerifyOTP from './pages/VerifyOTP';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -49,6 +50,7 @@ export default function App() {
           } />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
         </Routes>
       </main>
       <Footer />

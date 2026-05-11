@@ -21,8 +21,9 @@ export const registerSchema = Joi.object({
   password: Joi.string().min(6).required().messages({
     'string.min': 'Password must be at least 6 characters long',
     'any.required': 'Password is a required field'
-  })
-});
+  }),
+  otp: Joi.string().length(6).required(),
+}).unknown(true);
 
 export const loginSchema = Joi.object({
   email: Joi.string().email().required().messages({
