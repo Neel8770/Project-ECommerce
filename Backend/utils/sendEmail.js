@@ -1,22 +1,21 @@
-import 'dotenv/config';
 import nodemailer from "nodemailer";
 
-let transporter = null; // Start as null
+let transporter = null;
 
 const getTransporter = () => {
   if (!transporter) {
-    // Created lazily — only on first call, AFTER dotenv has loaded
     transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+      port: 587,                          // ← Changed from 465
+      secure: false,                      // ← Changed from true (587 uses STARTTLS, not implicit TLS)
+      tls: { rejectUnauthorized: false }, // ← Added (Render's SSL certs can cause verification issues)
       auth: {
-        user: process.env.EMAIL_USER,   // ✅ Now defined
-        pass: process.env.EMAIL_PASS,   // ✅ Now defined
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
+      connectionTimeout: 15000,           // ← Increased for cloud latency
+      greetingTimeout: 15000,
+      socketTimeout: 15000,
     });
   }
   return transporter;
