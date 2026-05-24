@@ -1,19 +1,29 @@
+import 'dotenv/config';
 import nodemailer from "nodemailer";
 
-export const sendEmail = async (email, otp) => {
-  // Use explicit host and port instead of 'service: gmail'
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, 
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS, // MUST be the 16-digit App Password
-    },
-    connectionTimeout: 10000, // 10 seconds - stops the 120s loop
-  });
+let transporter = null; // Start as null
 
-  await transporter.sendMail({
+const getTransporter = () => {
+  if (!transporter) {
+    // Created lazily — only on first call, AFTER dotenv has loaded
+    transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,   // ✅ Now defined
+        pass: process.env.EMAIL_PASS,   // ✅ Now defined
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
+    });
+  }
+  return transporter;
+};
+
+export const sendEmail = async (email, otp) => {
+  await getTransporter().sendMail({
     from: `"ShopVibe" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "OTP Verification",
