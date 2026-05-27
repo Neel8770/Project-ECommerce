@@ -1,19 +1,28 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export const sendEmail = async (email, otp) => {
-  const { data, error } = await resend.emails.send({
-    from: "ShopVibe <onboarding@resend.dev>",
-    to: email,
-    subject: "OTP Verification",
-    text: `Your OTP is: ${otp}`,
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "accept": "application/json",
+      "api-key": process.env.BREVO_API_KEY,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      sender: { 
+        name: "ShopVibe", 
+        email: process.env.EMAIL_USER 
+      },
+      to: [{ email: email }],
+      subject: "OTP Verification - ShopVibe",
+      textContent: `Your OTP is: ${otp}. It is valid for 10 minutes.`,
+    }),
   });
 
-  if (error) {
-    throw new Error(error.message);
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to send email via Brevo");
   }
 
-  console.log("✅ Email sent successfully to:", email, "MessageID:", data.id);
+  console.log("✅ Email sent successfully to:", email);
 };
+
 
