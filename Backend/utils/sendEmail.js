@@ -1,32 +1,19 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-let transporter = null;
-
-const getTransporter = () => {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      tls: { rejectUnauthorized: false },
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      connectionTimeout: 15000,
-      greetingTimeout: 15000,
-      socketTimeout: 15000,
-    });
-  }
-  return transporter;
-};
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (email, otp) => {
-  const result = await getTransporter().sendMail({
-    from: `"ShopVibe" <${process.env.EMAIL_USER}>`,
+  const { data, error } = await resend.emails.send({
+    from: "ShopVibe <onboarding@resend.dev>",
     to: email,
     subject: "OTP Verification",
     text: `Your OTP is: ${otp}`,
   });
-  console.log("✅ Email sent successfully to:", email, "MessageID:", result.messageId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  console.log("✅ Email sent successfully to:", email, "MessageID:", data.id);
 };
+
