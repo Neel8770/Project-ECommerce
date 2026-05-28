@@ -17,7 +17,7 @@ export const sendEmail = async (email, otp) => {
     }),
   });
 
-  if (!response.ok) {
+   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || "Failed to send email via Brevo");
   }
